@@ -1,3 +1,11 @@
+# Cloud Service Access Management API
+
+## Overview
+
+Cloud Service Access Management API is a backend system that simulates subscription-based access control for cloud services. It allows administrators to create subscription plans, assign permissions, manage users, and enforce real-time usage limits based on each customer’s plan.
+
+The project demonstrates backend API design, role-based access control, quota enforcement, scheduled validation, and MongoDB-backed data storage.
+
 1. Install Required Packages
 Install the necessary Python packages:
 ```bash
