@@ -1,150 +1,164 @@
 # Cloud Service Access Management API
 
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green?logo=fastapi&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen?logo=mongodb&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+A production-style backend API for managing cloud service subscriptions, role-based access control, usage limits, and real-time quota enforcement — built with FastAPI and MongoDB Atlas.
+
+**🔗 Live Demo:** [https://cloud-access-api-edwj.onrender.com/docs](https://cloud-access-api-edwj.onrender.com/docs)
+
+> The free tier may take ~30 seconds to wake up on first request.
+
+---
+
 ## Overview
 
-Cloud Service Access Management API is a backend system that simulates subscription-based access control for cloud services. It allows administrators to create subscription plans, assign permissions, manage users, and enforce real-time usage limits based on each customer’s plan.
+This project simulates a subscription-based cloud service platform where administrators can define service plans and permissions, and customers can subscribe, consume services, and track their usage in real time.
 
-The project demonstrates backend API design, role-based access control, quota enforcement, scheduled validation, and MongoDB-backed data storage.
+The API enforces usage limits automatically — when a customer approaches or exceeds their quota, the system detects it via a scheduled background job and blocks further access. All endpoints are secured and documented via Swagger/OpenAPI.
 
-1. Install Required Packages
-Install the necessary Python packages:
+---
+
+## Features
+
+- **Role-Based Access Control (RBAC)** — separate admin and customer permission models with extensible roles
+- **Subscription plan management** — create, update, and delete tiered service plans with configurable API permissions and usage limits
+- **Real-time quota enforcement** — APScheduler runs background validation to detect and alert on quota overuse before it occurs
+- **Usage tracking** — per-user service consumption is logged and retrievable via API
+- **JWT Authentication** — all endpoints secured with token-based authentication
+- **Interactive API docs** — full Swagger/OpenAPI UI available at `/docs`
+- **MongoDB Atlas** — scalable document-based storage for multi-tenant data
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | FastAPI |
+| Database | MongoDB Atlas (via Motor async driver) |
+| Authentication | JWT (python-jose) |
+| Scheduling | APScheduler |
+| Templating | Jinja2 |
+| Deployment | Render |
+| Language | Python 3.11 |
+
+---
+
+## API Endpoints
+
+### Admin Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/admin/subscription_plans` | Create a new subscription plan |
+| `GET` | `/api/admin/subscription_plans` | List all subscription plans |
+| `PUT` | `/api/admin/subscription_plans/{id}` | Update a subscription plan |
+| `DELETE` | `/api/admin/subscription_plans/{id}` | Delete a subscription plan |
+| `POST` | `/api/admin/permissions` | Add a new service permission |
+| `GET` | `/api/admin/permissions` | List all permissions |
+| `PUT` | `/api/admin/permissions/{id}` | Update a permission |
+| `DELETE` | `/api/admin/permissions/{id}` | Delete a permission |
+
+### Customer Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/customer/subscribe` | Subscribe a user to a plan |
+| `GET` | `/api/customer/usage/{user_id}` | View a user's usage statistics |
+| `POST` | `/api/service/{api_name}` | Call a service (enforces quota limits) |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.11+
+- MongoDB Atlas account (free tier works)
+
+### Installation
+
+1. **Clone the repository**
 ```bash
-pip install fastapi uvicorn motor jinja2
+git clone https://github.com/CyrenaBurke/cloud-service-access-management-api.git
+cd cloud-service-access-management-api
 ```
 
-2. Configure MongoDB Atlas
-1. Log in to your MongoDB Atlas account.
-2. Create a database cluster if not already available.
-3. Add a database user with read/write access.
-4. Update the connection string in the `app.py` file:
-   ```python
-   MONGO_URI = "mongodb+srv://<db_username>:<db_password>@cluster0.sgudd.mongodb.net/"
+2. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Configure MongoDB Atlas**
+
+   - Create a free cluster at [cloud.mongodb.com](https://cloud.mongodb.com)
+   - Add a database user and copy your connection string
+   - Create a database named `cloud_services` with collections:
+     - `subscription_plans`
+     - `permissions`
+     - `user_subscriptions`
+     - `user_usage_stats`
+
+4. **Set environment variables**
+
+   Create a `.env` file in the project root:
    ```
-5. Ensure the database name is `cloud_services` and collections (`subscription_plans`, `permissions`, `user_subscriptions`, `user_usage_stats`) exist.
-
-### 3. Directory Structure
-Ensure your project directory has the following structure:
-```
-.
-├── app.py                  # Main application file
-├── templates/              # Directory for HTML templates
-│   └── home.html           # Home page template
-├── static/                 # Directory for static files (e.g., CSS, JS)
-```
-
-4. Add `home.html`
-Create a `templates/home.html` file with the following content:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cloud Services</title>
-</head>
-<body>
-    <h1>Subscription Plans</h1>
-    <ul>
-        {% for plan in plans %}
-            <li>{{ plan['name'] }}: {{ plan['description'] }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
-```
-
-**Running the Application**
-1. Start the application using `uvicorn`:
-   ```bash
-   uvicorn app:app --reload
+   MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/
    ```
 
-2. Open your browser and navigate to:
-   - Home page: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-   - Swagger UI (API documentation): [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+5. **Run the application**
+```bash
+uvicorn app:app --reload
+```
 
-**API Usage**
+6. **Open the API docs**
 
-Admin Endpoints
-Create Subscription Plan
-- **Endpoint**: `/api/admin/subscription_plans`
-- **Method**: POST
-- **Request Body**:
-  ```json
-  {
-      "name": "Basic Plan",
-      "description": "Access to basic services",
-      "api_permissions": ["service1", "service2"],
-      "usage_limits": {"service1": 100, "service2": 50}
-  }
-  ```
+   Navigate to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-List Subscription Plans
-- **Endpoint**: `/api/admin/subscription_plans`
-- **Method**: GET
+---
 
-Add Permission
-- **Endpoint**: `/api/admin/permissions`
-- **Method**: POST
-- **Request Body**:
-  ```json
-  {
-      "name": "Service 1 Access",
-      "api_endpoint": "service1",
-      "description": "Access to Service 1"
-  }
-  ```
+## Project Structure
 
-Customer Endpoints
-Subscribe to Plan
-- **Endpoint**: `/api/customer/subscribe`
-- **Method**: POST
-- **Request Body**:
-  ```json
-  {
-      "user_id": "user123",
-      "plan_id": "<PLAN_ID>"
-  }
-  ```
+```
+cloud-service-access-management-api/
+├── app.py              # Main FastAPI application
+├── templates/
+│   └── home.html       # Home page template
+├── static/
+│   └── styles.css      # Static styles
+├── requirements.txt
+└── README.md
+```
 
-View Usage Statistics
-- **Endpoint**: `/api/customer/usage/{user_id}`
-- **Method**: GET
+---
 
-Call a Service
-- **Endpoint**: `/api/service/{api_name}`
+## Screenshots
 
-- **Method**: POST
-- **Request Body**:
-  ```json
-  {
-      "user_id": "user123",![getuser](https://github.com/user-attachments/assets/6f434b43-eced-456f-946c-a045647a7baf)
+### Subscription Plans
+![Get Plans](https://github.com/user-attachments/assets/dd73fd1d-a0a1-4317-bf39-f5c1377a7a00)
 
-      "api": "service1"
-  }
-  ```
+### Create Subscription
+![Post Subscription](https://github.com/user-attachments/assets/a8f8ada7-155b-4d2b-a226-4feb8677c219)
 
-**Testing the Application**
-1. Use Swagger UI ([http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)) to interact with the API endpoints.
-2. Monitor the MongoDB Atlas database to ensure data is being saved correctly.
+### Permissions Management
+![Get Permissions](https://github.com/user-attachments/assets/57d9be15-cb67-4120-bf5d-4039dfafea67)
 
-**Error Handling**
-- **404 Not Found**: Returned when a requested resource does not exist.
-- **403 Forbidden**: Returned when a user attempts to access a restricted resource.
-- **500 Internal 
-Server Error**: Returned for unexpected issues.
+### Service API Call
+![Post API](https://github.com/user-attachments/assets/f1131797-54f3-4e3f-8257-ca3a92671924)
 
-VIDEO DEMONSTRATION:
-https://adcsuf-my.sharepoint.com/:v:/r/personal/aviyasingh_csu_fullerton_edu/Documents/Attachments/fastapi-swagger-ui_wGugpOl6.mp4?csf=1&web=1&e=yMt6Pb&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
+---
 
+## Video Demonstration
 
-![postsub](https://github.com/user-attachments/assets/a8f8ada7-155b-4d2b-a226-4feb8677c219)
-![deleteperm](https://github.com/user-attachments/assets/a7bbc27d-3469-487b-9311-04dfed61d376)
-![putperm](https://github.com/user-attachments/assets/0e8e30fb-2384-4924-b8c4-015b35968bad)
-![getsub](https://github.com/user-attachments/assets/37df5ff8-4989-40d7-a802-72015636b0eb)
-![postapi](https://github.com/user-attachments/assets/f1131797-54f3-4e3f-8257-ca3a92671924)
-![postperm](https://github.com/user-attachments/assets/b5bd0d83-a68e-4f06-97ce-bc3206d80bf3)
-![getperm](https://github.com/user-attachments/assets/57d9be15-cb67-4120-bf5d-4039dfafea67)
-![deleteplans](https://github.com/user-attachments/assets/6f702662-9e99-4736-8fbc-f2a0c9b3e046)
-![putplans](https://github.com/user-attachments/assets/bf4ccda2-08d4-4552-a0bb-bc72dab4489b)
-![postplans](https://github.com/user-attachments/assets/0ee2bae7-822b-44a2-9468-869ca5a6c012)
-![gettplans](https://github.com/user-attachments/assets/dd73fd1d-a0a1-4317-bf39-f5c1377a7a00)
-![gethome](https://github.com/user-attachments/assets/ce80f5bd-5672-4303-98e7-d722b4ce68a5)
+A full walkthrough of the API using Swagger UI is available here:
+[Watch Demo](https://adcsuf-my.sharepoint.com/:v:/r/personal/aviyasingh_csu_fullerton_edu/Documents/Attachments/fastapi-swagger-ui_wGugpOl6.mp4?csf=1&web=1&e=yMt6Pb)
+
+---
+
+## Author
+
+**Cyrena Burke**
+[LinkedIn](https://www.linkedin.com/in/cyrena-burke/) · [GitHub](https://github.com/CyrenaBurke)
