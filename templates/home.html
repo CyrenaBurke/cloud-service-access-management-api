@@ -1,14 +1,292 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cloud Services</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cloud Service Access Management API</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1F3864;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .brand {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    header .brand span {
+      color: #4ade80;
+    }
+
+    header nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    header nav a:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1F3864 0%, #2E75B6 100%);
+      padding: 4rem 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.8);
+      max-width: 580px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* ── Main content ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1F3864;
+    }
+
+    .section-header .count {
+      background: #1F3864;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    /* ── Plan cards ── */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .plan-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(31,56,100,0.1);
+    }
+
+    .plan-card .plan-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #1F3864, #2E75B6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .plan-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1F3864;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-card p {
+      font-size: 0.875rem;
+      color: #64748b;
+      line-height: 1.55;
+    }
+
+    .plan-card .plan-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      background: #eff6ff;
+      color: #2E75B6;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* ── CTA ── */
+    .cta-box {
+      background: linear-gradient(135deg, #1F3864 0%, #2E75B6 100%);
+      border-radius: 14px;
+      padding: 2.5rem;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-box h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-box a {
+      display: inline-block;
+      background: white;
+      color: #1F3864;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .cta-box a:hover { opacity: 0.9; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    footer a {
+      color: #2E75B6;
+      text-decoration: none;
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 <body>
+
+  <header>
+    <span class="brand">Cloud Service <span>Access</span> API</span>
+    <nav>
+      <a href="/docs">API Documentation →</a>
+    </nav>
+  </header>
+
+  <div class="hero">
     <h1>Subscription Plans</h1>
-    <ul>
-        {% for plan in plans %}
-            <li>{{ plan.name }}: {{ plan.description }}</li>
-        {% endfor %}
-    </ul>
+    <p>Manage cloud service access with role-based permissions, usage limits, and real-time quota enforcement.</p>
+    <div class="hero-badges">
+      <span class="badge">FastAPI</span>
+      <span class="badge">MongoDB Atlas</span>
+      <span class="badge">RBAC</span>
+      <span class="badge">REST API</span>
+    </div>
+  </div>
+
+  <main>
+    <div class="section-header">
+      <h2>Available Plans</h2>
+      <span class="count">{{ plans | length }}</span>
+    </div>
+
+    {% if plans %}
+    <div class="plans-grid">
+      {% for plan in plans %}
+      <div class="plan-card">
+        <div class="plan-icon">☁</div>
+        <h3>{{ plan.name }}</h3>
+        <p>{{ plan.description }}</p>
+        <span class="plan-tag">Active</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      No subscription plans found. Use the API to create plans.
+    </div>
+    {% endif %}
+
+    <div class="cta-box">
+      <h2>Explore the Full API</h2>
+      <p>Create and manage subscription plans, assign permissions, and track usage via the interactive API documentation.</p>
+      <a href="/docs">Open Swagger UI →</a>
+    </div>
+  </main>
+
+  <footer>
+    Built with FastAPI &amp; MongoDB Atlas &nbsp;·&nbsp;
+    <a href="/docs">API Docs</a> &nbsp;·&nbsp;
+    <a href="https://github.com/CyrenaBurke/cloud-service-access-management-api" target="_blank">GitHub</a>
+  </footer>
+
 </body>
 </html>
