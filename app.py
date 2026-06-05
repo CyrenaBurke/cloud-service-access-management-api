@@ -71,7 +71,7 @@ async def update_usage(user_id: str, api: str):
 @app.get("/")
 async def home(request: Request):
     plans = await db.subscription_plans.find().to_list(100)
-    return templates.TemplateResponse("home.html", {"request": request, "plans": plans})
+    return templates.TemplateResponse(request=request, name="home.html", context={"plans": plans})
 
 @app.post("/api/admin/subscription_plans", status_code=201)
 async def create_subscription_plan(plan: SubscriptionPlan):
