@@ -151,13 +151,6 @@ cloud-service-access-management-api/
 
 ---
 
-## Video Demonstration
-
-A full walkthrough of the API using Swagger UI is available here:
-[Watch Demo](https://adcsuf-my.sharepoint.com/:v:/r/personal/aviyasingh_csu_fullerton_edu/Documents/Attachments/fastapi-swagger-ui_wGugpOl6.mp4?csf=1&web=1&e=yMt6Pb)
-
----
-
 ## Author
 
 **Cyrena Burke**
