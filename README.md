@@ -19,6 +19,8 @@ This project simulates a subscription-based cloud service platform where adminis
 
 The API enforces usage limits automatically — when a customer approaches or exceeds their quota, the system detects it via a scheduled background job and blocks further access. All endpoints are secured and documented via Swagger/OpenAPI.
 
+**Live Demo:** [cloud-access-api-edwj.onrender.com/docs](https://cloud-access-api-edwj.onrender.com/docs) — interactive Swagger UI, try the endpoints directly in your browser.
+
 ---
 
 ## Features
